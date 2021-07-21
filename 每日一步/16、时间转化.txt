@@ -1,4 +1,0 @@
-1、将字符串转为日期格式
-	tDeductDate = tDeductDate.replace("-", "/");
-	tLBPOTempFeeListSchema.setGETDATE(new Date(tDeductDate));
-new Date();
