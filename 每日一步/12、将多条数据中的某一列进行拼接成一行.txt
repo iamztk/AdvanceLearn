@@ -1,0 +1,21 @@
+1、多条数据的某一列，进行拼接成一行
+	方法一：通过函数  listagg
+select l.matchserialno ,listagg(l.billno,',') within group(order by l.matchserialno)||'合并核销'
+from lcbill l where exists(select count(1) from lcbill lc where lc.matchserialno= l.matchserialno having count(1) > 1)
+group by l.matchserialno
+
+此查询语句是： lcbill表中的matchserialno 相同的列进行拼接 billno, 通过“，”进行分隔。并在最后拼接‘合并核销’字段
+listagg(l.billno,',')  :  listagg(a, b)  
+		a -- 表中要拼接的列
+		b -- 通过什么分隔符进行拼接，不填则为空
+
+	方法二： 通过函数 wm_concat()
+select l.matchserialno,to_char(wm_concat(l.billno))||'合并核销' as bc from lcbill l
+where exists(select count(1) from lcbill lc where lc.matchserialno= l.matchserialno having count(1) > 1)
+ group by l.matchserialno order by l.matchserialno
+
+此查询语句是： lcbill表中的matchserialno 相同的列进行拼接billno， 默认连接方式“，”进行分隔。并在最后拼接“合并核销”字段
+因为 wm_concat()  得到的值的类型是 <CLOB>, 如果需要转为String类型，则需要进行to_char()进行转换。
+
+	方法三：--xmlagg(xmlparse(content 合并字段||’,’ wellformed) order by 排序字段).getclobval()
+	listagg合并返回的是一个varchar2,有长度限制，可使用此方式进行转化，应是转化为clob

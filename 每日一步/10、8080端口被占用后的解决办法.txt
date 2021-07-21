@@ -1,0 +1,21 @@
+进入cmd命令窗口
+
+C:\Users\szw200902>netstat -ano | findstr 8080  // 查找被占用的端口
+  TCP    0.0.0.0:8080           0.0.0.0:0              LISTENING       10012
+  TCP    10.141.163.71:65374    10.142.142.39:8080     ESTABLISHED     12964
+  TCP    [::]:8080              [::]:0                 LISTENING       10012
+
+
+C:\Users\szw200902>taskkill /pid 10012 /f    // 终止该端口
+成功: 已终止 PID 为 10012 的进程。
+
+C:\Users\szw200902>taskkill /pid 12964 /f
+成功: 已终止 PID 为 12964 的进程。
+
+C:\Users\szw200902>
+
+
+
+netstat -ano | findstr 20000
+
+C:\Users\szw200902>taskkill /pid 3980 /f    // 终止该端口
