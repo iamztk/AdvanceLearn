@@ -1,0 +1,47 @@
+Spring常用注解：
+1、用于注册bean对象的注解
+    1.1、@Component
+    1.2、@Controller
+    1.3、@Service
+    1.4、@Repository
+    1.5、@Bean
+
+2、用于依赖注入的注解
+    2.1、@Autowired
+@Autowire和@Resource都是Spring支持的注解形式动态装配bean的方式。
+Autowire默认按照类型(byType)装配，如果想要按照名称(byName)装配，
+需结合@Qualifier注解使用。
+    2.2、@Qualifier
+在自动按照类型注入的基础之上，再按照 Bean 的 id 注入。它在给字段注入时不能
+独立使用，必须和 @Autowire一起使用；但是给方法参数注入时，可以独立使用。
+    2.3、@Resource
+@Autowire和@Resource都是Spring支持的注解形式动态装配bean的方式。
+@Resource默认按照名称(byName)装配，名称可以通过name属性指定。
+如果没有指定name，则注解在字段上时，默认取（name=字段名称）装配。
+如果注解在setter方法上时，默认取（name=属性名称）装配。
+
+1.如果同时指定name和type属性，则找到唯一匹配的bean装配，未找到则抛异常；
+2.如果指定name属性，则按照名称(byName)装配，未找到则抛异常；
+3.如果指定type属性，则按照类型(byType)装配，未找到或者找到多个则抛异常；
+4.既未指定name属性，又未指定type属性，则按照名称(byName)装配；如果未找到，
+则按照类型(byType)装配。
+
+3、用于改变bean作用范围的注解：
+    3.1、@Scope: 指定bean的作用范围。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

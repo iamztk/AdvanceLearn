@@ -1,0 +1,105 @@
+1、 @Mapper  注解：（标注 在接口上，从而直接在*mapper.xml进行数据操作）
+作用：
+
+1.使用@Mapper将NewsDAO接口交给Spring进行管理
+2.不用写Mapper映射文件（XML）
+3.为这个NewsDAO接口生成一个实现类，让别的类进行引用
+
+使用注意事项：
+1.接口不可以定义重名方法，即不支持方法重载
+2.方法参数有多个的时候，需要使用@Param，单参数方法不需要
+
+2、@Autowired 注解：（自动生成该类的对象）
+它可以对类成员变量、方法及构造函数进行标注，
+完成自动装配的工作。 通过 @Autowired的使用来消除 set
+ ，get方法
+
+3、Spring三大特性
+1.控制反转
+正常我们都是新建对象，才可以调用对象。现在不需要了，交给容器来管理，
+我们只需要通过一些配置来完成把实体类交给容器这么个过程。
+（将创建对象的步骤交由spring来处理，通过bean来创建对象，后续直接调用即可，不需要每一步都创建）
+
+2.依赖注入
+在类前面加注解：@Component，在需要注入的类里面加注解：@Autowired，
+这样xml里面的自动扫描就会扫描到这些加了注解的类和属性，在实例化bean的时候，
+Spring容器会把加了@Component的类实例化；在实际运行时，会给加了@Autowired
+的属性注入对应的实例。@Autowired方式是通过反射来设置属性值的，
+具体参考：https://blog.csdn.net/wenluoxicheng/article/details/73608657
+3、AOP编程
+是固定的服务，是独立的。提升了代码的复用性，减少了代码的耦合度，减轻程序员的工作负担，把程序的重心放在了核心的逻辑上。
+它是可以通过预编译方式和运行期动态代理实现在不修改源代码的情况下给程序动态统一添加功能的一种技术。
+应用场景有日志记录，性能统计，安全控制，事务处理，异常处理等。
+
+4、Spring开发的朋友都知道Spring提供了5种scope分别
+是singleton、prototype、request、session、global session。
+单例bean与原型bean的区别
+
+单例：一个bean被声明为单例时，处理多次请求时spring容器
+里只实例化一个bean，后续的请求公用这个对象，
+这个对象存储在一个map中，当有请求时，
+先在缓存中（map）查找是否存在，存在则使用，
+不存在才实例化一个对象。
+原型：每当有请求来就实例化一个新的bean，没有缓存以及从缓存中查
+
+结论：
+    1、单例的bean只有第一次创建新的bean 后面都会复用该bean，所以不会频繁创建对象。
+
+    2、原型的bean每次都会新创建
+
+单例bean的优势：
+    由于不会每次都新创建新对象所以有一下几个性能上的优势：
+    减少了新生成实例的消耗
+    新生成实例消耗包括两方面，第一，spring会通过反射或者cglib来生成bean实例这都是耗性能的操作，其次给对象分配内存也会涉及复杂算法。
+    减少jvm垃圾回收
+    由于不会给每个请求都新生成bean实例，所以自然回收的对象少了。
+    可以快速获取到bean
+    因为单例的获取bean操作除了第一次生成之外其余的都是从缓存里获取的所以很快。
+
+单例bean的劣势
+单例的bean一个很大的劣势就是他不能做到线程安全，由于所有请求都共享一个bean实例，所以这个bean要是有状态的一个bean的话可能在并发场景下出现问题，而原型的bean则不会有这样问题（但也有例外，比如他被单例bean依赖），因为给每个请求都新创建实例。
+
+5、使用delete删除数据后，表空间不会回收，存在高水位
+High Water Mark，HWM） 是Oracle（Segment）级别的概念。在仅有DML（比如delete,insert）操作时，高水位线只会增长，不会降低。具体来说，由于程序使用的delete语句不回收使用过的空间，数据虽然删除了，但是高水位线却没有降低，仍然处于之前的水位。
+解决办法：降低表的高水位
+语法：alter table my_objects shrink space;
+ps:使用truncate删除数据，不会有HWM的现象 
+
+ Oracle DELETE和TRUNCATE 的区别
+
+语法
+delete from aa
+truncate table aa
+
+区别
+1.delete from后面可以写条件，truncate不可以。
+
+2.delete from记录是一条条删的，所删除的每行记录都会进日志，而truncate一次性删掉整个页，因此日至里面只记录页释放，
+简言之，delete from更新日志，truncate基本不，所用的事务日志空间较少。
+
+3.delete from删空表后，会保留一个空的页，truncate在表中不会留有任何页。
+
+4.当使用行锁执行 DELETE 语句时，将锁定表中各行以便删除。truncate始终锁定表和页，而不是锁定各行。
+
+5.如果有identity产生的自增id列，delete from后仍然从上次的数开始增加，即种子不变，而truncate后，种子会恢复初始。
+
+6.truncate不会触发delete的触发器，因为truncate操作不记录各个行删除。
+
+总结
+1.truncate和 delete只删除数据不删除表的结构(定义)
+drop语句将删除表的结构被依赖的约束(constrain),触发器(trigger),索引(index); 依赖于该表的存储过程/函数将保留,但是变为invalid状态（失效状态，需重新编译）。
+
+2.delete语句是dml,这个操作会放到rollback segement中,事务提交之后才生效;如果有相应的trigger,执行的时候将被触发
+truncate,drop是ddl, 操作立即生效,原数据不放到rollback segment中,不能回滚. 操作不触发trigger。
+
+3.delete语句不影响表所占用的extent, 高水线(high watermark)保持原位置不动
+显然drop语句将表所占用的空间全部释放
+truncate 语句缺省情况下见空间释放到 minextents个 extent,除非使用reuse storage; truncate会将高水线复位(回到最开始)。
+
+4.速度,一般来说: drop> truncate > delete。
+
+5.安全性:小心使用drop 和truncate,尤其没有备份的时候.否则哭都来不及。
+
+6.使用上,想删除部分数据行用delete,注意带上where子句. 回滚段要足够大. 想删除表,当然用drop
+想保留表而将所有数据删除. 如果和事务无关,用truncate即可. 如果和事务有关,或者想触发trigger,还是用delete
+如果是整理表内部的碎片,可以用truncate跟上reuse stroage,再重新导入/插入数据
