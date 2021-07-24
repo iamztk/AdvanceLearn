@@ -4,8 +4,7 @@
 2、常用的Set实现类：
 	a、HashSet
 	b、LinkedHashSet
-	c、HashTable
-	d、TreeSet
+	c、TreeSet
 	
 3、HashSet：
 	a、继承实现的类：
@@ -114,6 +113,11 @@
 					11、添加完以后，还需要进行判断：
 						当前数组长度是否超过了限定值【限定值 = 数组长度 * 扩容因子】
 						是：则需要进行扩容，默认两倍扩容
+					12、获取元素的方式：
+							由于没有索引，所以不能使用for循环，但是可以使用：
+							1、迭代器 hashSet.iterator();
+							2、增强for循环：[底层也是调用的迭代器]
+								for(Object hash : hashSet)｛｝
 			
 			
 			--相应的扩容方法：
@@ -256,10 +260,38 @@
 				
 	
 5、TreeSet
-
-6、HashTable
-
-
+	a、继承和实现的类：
+		public class TreeSet<E> extends AbstractSet<E>
+			implements NavigableSet<E>, Cloneable, java.io.Serializable
+		{
+		
+	b、TreeSet的存储结构
+		底层使用的是二叉树， 元素不可重复。
+		
+	c、TreeSet添加数据流程：
+		1、常用构造函数：
+			    public TreeSet() {
+					this(new TreeMap<E,Object>());
+				}
+		
+		2、new TreeSet()讲解：
+			底层是调用TreeMap构造函数
+	
+	总结:
+		1、底层数据结构是二叉树，所以数据不重复
+		2、添加对象的时候必须是实现了comparable接口，不然add方法会报错：
+					java.lang.ClassCastException: array.set.HashSetTest_01 cannot be cast to java.lang.Comparable
+		3、因为TreeSet().add()的元素必须实现comparable接口，所以，其内元素是有序的，依据比较器进行排序。
+		4、且TreeSet(),不能添加类型不一样的元素：
+			例：tree.add(1);  
+				tree.add("a");
+			会报如下错误：
+				java.lang.ClassCastException: java.lang.Integer cannot be cast to java.lang.String
+			因为：
+				 public boolean add(E e) {
+					return m.put(e, PRESENT)==null;
+				}
+				add()元素时，是个泛型：E， 当添加了第一个元素后，泛型E就固定成int了，后续再添加String类型是，就报错了。
 
 
 
