@@ -87,6 +87,14 @@
 				<property name="price" value="22"></property>
 
 			</bean>
+			
+		方式一XML配置的简化版：
+			P空间：
+				第一步：添加p命名空间：
+					xmlns:p="http://www.springframework.org/schema/p"
+				第二步：<bean>配置
+					<bean id="book" class="com.itguigu.spring.Book" p:bname="java语言面向对象" p:price="18"></bean>
+
 		
 		方式二：通过有参构造器注入：
 			<!--构造器注入-->
@@ -97,9 +105,45 @@
 			</bean>
 			
 		
-	
-	
-	
+	d、IOC中注入其他类型的属性：
+			1、注入NULL
+			2、注入特殊字符， 例如<< [在xml中会将< 这个符号认为是个标签]
+			
+			1、注入NULL值：
+				<bean id="book" class="com.itguigu.spring.Book">
+					<!--属性注入-->
+					<property name="bname">
+						-- <!--将bname的值设置为null， 不能直接value="null"吗-->
+						--将属性bname设置为null：方式一：
+					   <null/>
+					   --方式二：也可直接在<property name="bname" value="null">
+					</property>
+					<property name="price" value="22"></property>
+				</bean>
+				
+			2、注入特殊字符： << >>
+				方式一：使用&lt;  == 大于号   &gt;== 小于号
+					 <bean id="book" class="com.itguigu.spring.Book">
+						<!--属性注入-->
+					   <property name="bname" value="语言艺术"></property>
+							<!--将bname的值设置为null， 不能直接value="null"吗-->
+
+						<property name="price">
+							<value>&lt;&lt;南京&gt;&gt;</value>
+						</property>
+					</bean>
+					返回值：语言艺术===<<南京>>
+				
+				方式二：转义<![CDATA[<<南京>>]]>
+					<bean id="book" class="com.itguigu.spring.Book">
+						<!--属性注入-->
+					   <property name="bname" value="语言艺术"></property>
+							<!--将bname的值设置为null， 不能直接value="null"吗-->
+
+						<property name="price">
+							<value><![CDATA[<<南京>>]]></value>
+						</property>
+					</bean>
 	
 	
 	
