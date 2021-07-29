@@ -144,8 +144,101 @@
 							<value><![CDATA[<<南京>>]]></value>
 						</property>
 					</bean>
-	
-	
+					
+					
+	e、外部bean注入对象
+		public class UserService {
+
+			public UserDao userDao;
+
+			public void setUserDao(UserDao userDao) {
+				this.userDao = userDao;
+			}
+
+			public void update(){
+				System.out.println("UserService： 正在修改");
+				userDao.eat();
+			}
+		}
+		
+		xml配置：
+		    <!--配置UserDao-->
+			<bean id="userDao" class="com.itguigu.spring.demo2.UserImpl"></bean>
+			<!--配置UserService-->
+			<bean id="userService" class="com.itguigu.spring.demo2.UserService">
+				<property name="userDao" ref="userDao" />
+			</bean>
+			
+			在UserService中注入对象UserDao，需要在xml配置文件中使用ref关联上，使用IOC生成相应的
+		UserDao的对象和UserService的对象。
+			--解析xml
+			ApplicationContext app = new ClassPathXmlApplicationContext("bean2.xml");
+			--获取相应的bean【即对象】
+			UserService userService = app.getBean("userService", UserService.class);
+			userService.update();
+		
+	7、内部bean的xml配置：
+		 <!--内部bean配置-->
+		 <bean id="userService" class="com.itguigu.spring.demo2.UserService">
+				<property name="name" value="张三" />
+				<property name="userDao">
+					<bean id="userDao" class="com.itguigu.spring.demo2.UserImpl">
+						<property name="uname" value="李四" />
+					</bean>
+				</property>
+		 </bean>
+		
+		正常的在bean的内部配置bean
+		
+	8、级联配置：给关联的类进行属性的配置
+		<!--内部bean配置的级联配置-->
+			<bean id="userService" class="com.itguigu.spring.demo2.UserService">
+					<property name="name" value="张三" />
+					<property name="userDao">
+						<bean id="userDao" class="com.itguigu.spring.demo2.UserImpl">
+							<property name="uname" value="李四" />
+						</bean>
+					</property>
+			</bean>
+		 
+		<!--内部bean配置的级联配置-->  
+			<bean id="userDao" class="com.itguigu.spring.demo2.UserImpl"></bean>
+			<!--配置UserService-->
+			<bean id="userService" class="com.itguigu.spring.demo2.UserService">
+				<property name="name" value="张三"/>
+				<property name="userDao" ref="userDao" />
+				--注：如果通过userDao.uname, 则在userService中必须要有getUserDao()方法，不然无法获取UserDao对象。
+				<property name="userDao.uname" value="李四"/>
+			</bean>
+
+8、xml配置array、list、set、map属性
+		<bean id="stu" class="com.itguigu.spring.demo3.Stu">
+			<property name="courses">
+				<array>
+					<value>"语文"</value>
+					<value>"数学"</value>
+					<value>"英语"</value>
+				</array>
+			</property>
+			<property name="lists">
+				<list>
+					<value>"list1"</value>
+					<value>"list2"</value>
+				</list>
+			</property>
+			<property name="sets">
+				<set>
+					<value>"set1"</value>
+					<value>"set2"</value>
+				</set>
+			</property>
+			<property name="maps">
+				<map>
+					<entry key="map1" value="语文"></entry>
+					<entry key="map2" value="数学"></entry>
+				</map>
+			</property>
+		</bean>
 	
 	
 	
