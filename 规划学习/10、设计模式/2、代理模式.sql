@@ -99,11 +99,88 @@
 	JDK动态代理：
 		真实类必须实现接口，代理是基于实现类创建代理类。
 		
+		实现方式：
+			基于代理类：Proxy
+				Proxy.getProxyClass();
+				或者：
+				Proxy.newProxyInstance();
+				
+
+2、CGLIB动态代理
+		使用cglib动态代理需要有两个jar报：
+			1、cglib-2.2.jar
+			2、asm-3.3.1.jar
+		
+	代码编写：
+		--1、回调类，必须要实现MethodInterceptor
+		public class CglibProxy implements MethodInterceptor {
+			--o: 真实类
+			--method:要被拦截的方法
+			--objects: 参数数组
+			--methodProxy：代理类实例
+			public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+				System.out.println("前置开始!");
+				Object obj = methodProxy.invokeSuper(o, objects);
+				System.out.println("后置结束!");
+				return obj;
+			}
+		}
+		--2、真实类编写
+		public class Orders {
+			public void eat(){
+				System.out.println("吃饭吃饭！");
+			}
+			public void nomoalPeople(){
+				System.out.println("干饭干饭!");
+			}
+		}
+		--3、测试代码
+		public class OrdersTest_01 {
+			public static void main(String[] args) {
+				--新建Enhancer对象
+				Enhancer enhancer = new Enhancer();
+				--设置父类，即代理的真实类
+				enhancer.setSuperclass(Orders.class);
+				--设置回调
+				enhancer.setCallback(new CglibProxy());
+				--创建代理对象
+				Orders order = (Orders)enhancer.create();
+				order.eat();
+				order.nomoalPeople();
+			}
+		}
 		
 		
+		代码解析：
+			Enhancer enhancer = new Enhancer();
+			1、初始化静态代码块
+			
+		代理对象的生成由 Enhancer 类实现. Enhancer是CGLib的字节码增强器. 可以很方便的对类进行扩展.
+
+		Enhancer 创建代理对象的大概步骤如下:
+
+		1. 生成代理类 Class 二进制字节码.
+
+		2.通过 Class.forname() 加载字节码文件, 生成 Class 对象.
+
+		3.通过反射机制获得实例构造, 并创建代理类对象.
 		
 		
-		
+		底层大致原理：
+			原理一：CGLIB包的底层是通过使用一个小而快的字节码处理框架ASM，来转换字节码并生成新的类。
+			原理二：CGLib采用了非常底层的字节码技术，其原理是通过字节码技术为一个类创建子类，
+		并在子类中采用方法拦截的技术拦截所有父类方法的调用，顺势织入横切逻辑。
+			JDK动态代理与CGLib动态代理均是实现Spring AOP的基础。
+			
+			代理类开始是不存在的，都是通过cglib自动是生成的代理类。
+			生成的该代理类是真实类的子类，继承与真实类。
+
+	总结：
+		经测试，jdk创建对象的速度远大于cglib，这是由于cglib创建对象时需要操作字节码。
+	cglib执行速度略大于jdk，所以比较适合单例模式。另外由于CGLIB的大部分类是直接对Java字节码进行操作，
+	这样生成的类会在Java的永久堆中。如果动态代理操作过多，容易造成永久堆满，触发OutOfMemory异常。
+	spring默认使用jdk动态代理，如果类没有接口，则使用cglib。
+
 		
 		
 		

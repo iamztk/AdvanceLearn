@@ -1,3 +1,4 @@
+--参观网址：https://www.cnblogs.com/wyq178/p/6843502.html
 1、IOC的概念和原理
 	a、什么是IOC?
 		1、控制反转，把对象创建和对象之间的调用过程，交给spring来管理。、
@@ -19,11 +20,15 @@
 					String classValue = xml解析；					
 					--2、通过反射获取userDao对象
 					Class clzz = Class.forName(classValue);
-					return (UserDao)clzz.newInstance();
-				
-				}
-			
+					return (UserDao)clzz.newInstance();				
+				}			
 			}
+		
+		3、原理：
+			a、XML配置，相应的类的全限定名称，以及名称的唯一映射id。
+			b、解析该xml，获取限定名称，以及其他相关配置参数，通过反射，获取类的对象。
+			c、将对象存储进相应的map中。
+			d、通过getBean(id)方法，获取相应的对象。
 			
 	c、IOC接口
 		1、IOC思想基于IOC容器完成，IOC容器底层就是对象工厂。
@@ -45,7 +50,7 @@
 	a、什么是bean管理？
 		bean管理指的是两个操作：
 			1、Spring创建对象
-			2、Spring属性注入
+			2、Spring属性注入 （DI:依赖注入）
 			
 	b、bean管理有两种操作方式：
 		1、基于XML配置文件方式实现
