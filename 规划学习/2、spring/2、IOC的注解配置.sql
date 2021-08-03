@@ -80,6 +80,27 @@ IOC操作bean管理（基于注解）
 			在测试时，需要解析上述SpringConfig类：
 				--加载方式的区别：				
 				ApplicationContext app = new AnnotationConfigApplicationContext(SpringConfig.class);
+				
+
+				
+				
+IOC总结：
+	控制反转。
+		1、在没有IOC之前，创建对象的权利是交由需要调用对象的那个类进行创建的，即在B类中要调用A类的方法，则需在B类中创建A类的对象。
+		   在IOC之后，创建对象的权利交由了 Spring框架，只需要在配置中，配置相应的类（有注解后，不再采用xml配置的方式），则可由spring
+	创建相应的对象。
+		2、创建的对象有两种常用的情况：
+			单例bean（singleton）：对象在加载的时候就已经创建了，并存放于单例池 中，后需使用该对象的时候，都是 从单例池中获取，所以
+		每次获取的对象都是同一个。
+			原型bean（prototype）：对象在加载时不会 创建，而是在使用该对象的时候才会创建。所以，每次都是新new的对象。
+		3、依赖注入所常用的注解：
+			1、@Component，@Controller, @Service, @Repository
+			以上注解用于类上 ElementType.TYPE
+			2、@Autowired， @Qualifier, @Resource, @value
+				除@Resource是javax的外，其余三个都是spring的，所以建议使用其他三个。
+				ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE	
+		
+	
 			
 			
 			
