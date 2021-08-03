@@ -86,6 +86,83 @@ AOP概念
 				sout("环绕之后");
 			}
 		
+		代码展示：
+			@Before(value="execution(* com.itguigu.spring.aop.demo01.User.add(..))")
+			public void before(){
+				System.out.println("前置加强。。");
+			}
+
+			--有异常，该加强方法不执行
+			@AfterReturning(value="execution(* com.itguigu.spring.aop.demo01.User.add(..))")
+			public void afterReturning(){
+				System.out.println("返回值后加强。。");
+			}
+			
+			--不论有没有异常，该加强方法都执行
+			@After(value="execution(* com.itguigu.spring.aop.demo01.User.add(..))")
+			public void after(){
+				System.out.println("后置加强。。。");
+			}
+
+			--需增强的add方法有异常才会执行该增强方法。
+			@AfterThrowing(value="execution(* com.itguigu.spring.aop.demo01.User.add(..))")
+			public void afterThrowing(){
+				System.out.println("有异常后加强。。");
+			}
+			
+			--需加强的add()方法，无返回值，则可以这么些
+			@Around(value="execution(* com.itguigu.spring.aop.demo01.User.add(..))")
+			public void around(ProceedingJoinPoint procee) throws Throwable {
+				System.out.println("环绕之前。。");
+				procee.proceed();
+				System.out.println("环绕之后。。");
+			}
+			--如果需加强的add()方法，有返回值，则需这么写：
+			--不然会报错：AopInvocationException
+			@Around(value="execution(* com.itguigu.spring.aop.demo01.User.add(..))")
+			public Object around(ProceedingJoinPoint procee) throws Throwable {
+				System.out.println("环绕之前。。");
+				Object a = procee.proceed();
+				System.out.println("环绕之后。。");
+				return a;
+			}
+			
+		---对于切入点的抽取:
+			@Pointcut(value="execution(* com.itguigu.spring.aop.demo01.User.add(..))")
+			public void pointDemo(){
+
+			}
+
+			@Before(value="pointDemo()")
+			public void before(){
+				System.out.println("UserProxy2前置加强。。");
+			}
+		
+		--如果一个方法有多个增强类，如何设定增强类的优先级
+			可以通过注解@Order(1), @Order(2) ...
+			Order()中的数字越小优先级越高
+		
+		--完全注解方式，不再使用XML进行配置
+			@Configuration
+			@ComponentScan(basePackages = {"com.itguigu.spring.aop"})
+			@EnableAspectJAutoProxy(proxyTargetClass = true)
+			public class SpringConfig {
+			}
+			
+	7、使用XML配置文件：
+		
+		    <bean id="user" class="com.itguigu.spring.aop.demo02.User"></bean>  --需增强类
+			<bean id="userProxy3" class="com.itguigu.spring.aop.demo02.UserProxy3"></bean> 增强类
+
+			<aop:config>
+				<!--配置切入点-->
+				<aop:pointcut id="p" expression="execution(* com.itguigu.spring.aop.demo02.User.add(..))" />
+				<!--配置切面-->
+				<aop:aspect ref="userProxy3">
+					<aop:before method="before" pointcut-ref="p" />
+				</aop:aspect>
+			</aop:config>
+			
 		
 		
 		
