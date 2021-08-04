@@ -229,7 +229,45 @@
 		d、其内大多数方法是线程安全的，使用了synchronized修饰。
 	
 		
+6、ArrayList和LinkedList哪个更占内存？
+	答：一般情况下，是LinkedList，因为其内每个节点都要维护上下两个节点的指针。
+		但也不是绝对的，因为ArrayList存在扩容机制，当刚好ArrayList扩容后，而数组又没有什么数据时，
+	ArrayList可能更占内存。
+		但是由于ArrayList的元素是由transient关键字修饰的，如果集合本身要做序列化的话，在ArrayList
+	中多余的部分是不会被序列化的。
+		所以ArrayList的设计者将elementData设计为transient，然后在writeObject方法中手动将其序列化，
+	并且只序列化了实际存储的那些元素，而不是整个数组。
+	
+7、ArrayList中的transient elementData[]:
+		
+	Serializable:
+		序列化：将 Java 对象转换成字节流的过程。
+		反序列化：将字节流转换成 Java 对象的过程。
+		
+		当 Java 对象需要在网络上传输 或者 持久化存储到文件中时，就需要对 Java 对象进行序列化处理。
+		序列化的实现：类实现 Serializable 接口，这个接口没有需要实现的方法。实现 Serializable 接口是为了告诉 jvm 这个类的对象可以被序列化。
+
+		注意事项：
+			某个类可以被序列化，则其子类也可以被序列化
+			声明为 static 和 transient 的成员变量，不能被序列化。static 成员变量是描述类级别的属性，transient 表示临时数据
+			反序列化读取序列化对象的顺序要保持一致
+
+		
+			java的serialization提供了一个非常棒的存储对象状态的机制，说白了serialization就是把对象的状态存储到硬盘上 去，
+		等需要的时候就可以再把它读出来使用。有些时候像银行卡号这些字段是不希望在网络上传输的，
+		transient的作用就是把这个字段的生命周期仅存于调用者的内存中而不会写到磁盘里持久化，
+		意思是transient修饰的age字段，他的生命周期仅仅在内存中，不会被写到磁盘中。
 			
+			
+		在ArrayList中存在 transient elementData[];
+			ArrayList集合中的元素是transient修饰的。
+			并且对于该字段有专门的方法：
+				ArrayList.writeObject()进行处理，从而使得在扩容时，尽量降低内存空间的浪费。
+			对于在数组中没有值的索引不予以分配内存空间。
+			
+		问题：请问集合的底层是数组，经过扩容后，数组大小为：34， 目前有元素23个，那么
+		请问该集合所占的内存空间是多少，比23大吗？为什么？
+
 			
 			
 	
