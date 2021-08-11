@@ -157,6 +157,14 @@ Webflux:使用场景：
 		在application.properties中配置：
 			server.port=8081
 
+7、SpringMVC和 SpringWebFlux的区别：
+	SpringMVC实现方式：
+		SpringMVC + Servlet + Tomcat
+	
+	SpringWebFlux实现方式：
+		SpringWebFlux + Reactor + Netty
+		
+8、SpringWebFlux(基于函数式编程模型)
 
 
 
